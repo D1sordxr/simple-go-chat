@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"github.com/D1sordxr/simple-go-chat/internal/application/user/dto"
 	"github.com/D1sordxr/simple-go-chat/internal/application/user/interfaces/dao"
 	"github.com/google/uuid"
@@ -19,6 +20,10 @@ func NewUserDAO(conn *pgx.Conn) *DAOImpl {
 
 func (dao *DAOImpl) Create(user dto.User) (dto.User, error) {
 	newUserID := uuid.New()
+	if len(user.Username) <= 1 {
+		err := errors.New("username has to be 2 or more characters")
+		return dto.User{}, err
+	}
 
 	ctx := context.Background()
 	query := `
