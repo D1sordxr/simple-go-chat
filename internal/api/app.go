@@ -29,6 +29,7 @@ func NewApp(config *config.Config,
 }
 
 func (a *App) Run() {
+	a.registerRoutes()
 	port := ":" + a.Config.API.Port
 	if err := a.Router.Run(port); err != nil {
 		log.Fatalf("error starting server: %v", err)

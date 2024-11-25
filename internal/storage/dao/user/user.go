@@ -28,14 +28,14 @@ func (dao *DAOImpl) Create(user dto.User) (dto.User, error) {
 	`
 
 	err := dao.Storage.QueryRow(ctx, query, newUserID, user.Username).Scan(
-		user.ID,
-		user.UserID,
-		user.Username,
-		user.CreatedAt,
+		&user.ID,
+		&user.UserID,
+		&user.Username,
+		&user.CreatedAt,
 	)
 	if err != nil {
 		return dto.User{}, err
 	}
 
-	return dto.User{}, nil
+	return user, nil
 }
