@@ -17,7 +17,7 @@ func migrateUsersTable(conn *pgx.Conn) {
 		    created_at TIMESTAMPTZ DEFAULT NOW(),
 		    updated_at TIMESTAMPTZ DEFAULT NOW(),
 		    user_id UUID NOT NULL UNIQUE,
-		    name VARCHAR NOT NULL
+		    username VARCHAR NOT NULL
 		)`
 
 	_, err := conn.Exec(ctx, query)

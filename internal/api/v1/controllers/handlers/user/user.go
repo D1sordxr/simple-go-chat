@@ -33,7 +33,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusTeapot, responses.CommonResponse{
+	c.JSON(http.StatusCreated, responses.CommonResponse{
 		Message: "Successfully created!",
 		Data:    newUser,
 	})
