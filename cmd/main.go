@@ -3,6 +3,7 @@ package main
 import (
 	loadApp "github.com/D1sordxr/simple-go-chat/internal/api"
 	loadEngine "github.com/D1sordxr/simple-go-chat/internal/api/engine"
+	loadUseCases "github.com/D1sordxr/simple-go-chat/internal/application"
 	loadConfig "github.com/D1sordxr/simple-go-chat/internal/config"
 	loadStorage "github.com/D1sordxr/simple-go-chat/internal/storage"
 	"log"
@@ -19,8 +20,10 @@ func main() {
 		log.Fatalf("error connecting storage: %v", err)
 	}
 
+	useCases := loadUseCases.NewUseCases(storage.UserDAO)
+
 	router := loadEngine.NewEngine().Engine
 
-	app := loadApp.NewApp(cfg, storage, router)
+	app := loadApp.NewApp(cfg, storage, useCases, router)
 	app.Run()
 }

@@ -14,6 +14,7 @@ type DAOImpl struct {
 func NewUserDAO(conn *pgx.Conn) *DAOImpl {
 	return &DAOImpl{Storage: conn}
 }
+
 func (dao *DAOImpl) Create(user dto.User) (dto.User, error) {
 	return dto.User{}, nil
 }

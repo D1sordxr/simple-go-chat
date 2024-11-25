@@ -2,6 +2,7 @@ package api
 
 import (
 	routesV1 "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers"
+	"github.com/D1sordxr/simple-go-chat/internal/application"
 	"github.com/D1sordxr/simple-go-chat/internal/config/config"
 	"github.com/D1sordxr/simple-go-chat/internal/storage"
 	"github.com/gin-gonic/gin"
@@ -9,18 +10,21 @@ import (
 )
 
 type App struct {
-	Config  *config.Config
-	Storage *storage.Storage
-	Router  *gin.Engine
+	Config   *config.Config
+	Storage  *storage.Storage
+	Router   *gin.Engine
+	UseCases *application.UseCases
 }
 
 func NewApp(config *config.Config,
 	storage *storage.Storage,
+	useCases *application.UseCases,
 	router *gin.Engine) *App {
 	return &App{
-		Config:  config,
-		Storage: storage,
-		Router:  router,
+		Config:   config,
+		Storage:  storage,
+		Router:   router,
+		UseCases: useCases,
 	}
 }
 
@@ -36,5 +40,5 @@ func (a *App) registerRoutes() {
 	api := a.Router.Group("/api")
 
 	// V1 path
-	routesV1.NewRoutesV1(api, a.UseCase)
+	routesV1.NewRoutesV1(api, a.UseCases)
 }
