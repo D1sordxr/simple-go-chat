@@ -29,7 +29,7 @@ func (dao *DAOImpl) Create(user dto.User) (dto.User, error) {
 	query := `
 		INSERT INTO users(user_id, username, created_at, updated_at) 
 		VALUES ($1, $2, NOW(), NOW()) 
-		RETURNING id, user_id, username, created_at
+		RETURNING id, user_id, username, created_at, updated_at
 	`
 
 	err := dao.Storage.QueryRow(ctx, query, newUserID, user.Username).Scan(
@@ -37,6 +37,7 @@ func (dao *DAOImpl) Create(user dto.User) (dto.User, error) {
 		&user.UserID,
 		&user.Username,
 		&user.CreatedAt,
+		&user.UpdatedAt,
 	)
 	if err != nil {
 		return dto.User{}, err
