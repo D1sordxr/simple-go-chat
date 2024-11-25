@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	storage "github.com/D1sordxr/simple-go-chat/internal/storage/config"
+	"github.com/D1sordxr/simple-go-chat/internal/storage/migrations"
 	"github.com/jackc/pgx/v5"
 	"log"
 )
@@ -17,6 +18,10 @@ func NewStorage(config *storage.StorageConfig) (*Storage, error) {
 	storageConnection, err := pgx.Connect(context.Background(), connectionString)
 	if err != nil {
 		log.Fatalf("error connecting database %v", err)
+	}
+
+	if config.Migration {
+		migrations.Migrate(storageConnection)
 	}
 
 	return &Storage{Connection: storageConnection}, nil
