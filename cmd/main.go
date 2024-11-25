@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	loadConfig "github.com/D1sordxr/simple-go-chat/internal/config"
+	loadStorage "github.com/D1sordxr/simple-go-chat/internal/storage"
 	"log"
 )
 
@@ -11,9 +12,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("error loading config: %v", err)
 	}
-	fmt.Println(cfg)
 
-	// TODO: init storage
+	storage, err := loadStorage.NewStorage(&cfg.Storage)
+	fmt.Println(storage, cfg)
 
 	// TODO: init api
 
