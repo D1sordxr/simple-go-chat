@@ -1,6 +1,7 @@
 package api
 
 import (
+	routesV1 "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers"
 	"github.com/D1sordxr/simple-go-chat/internal/config/config"
 	"github.com/D1sordxr/simple-go-chat/internal/storage"
 	"github.com/gin-gonic/gin"
@@ -28,4 +29,12 @@ func (a *App) Run() {
 	if err := a.Router.Run(port); err != nil {
 		log.Fatalf("error starting server: %v", err)
 	}
+}
+
+func (a *App) registerRoutes() {
+	// Main path
+	api := a.Router.Group("/api")
+
+	// V1 path
+	routesV1.NewRoutesV1(api, a.UseCase)
 }
