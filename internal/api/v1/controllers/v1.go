@@ -27,4 +27,7 @@ func (r *RoutesV1) setupRoutesV1() {
 	// Users path
 	userHandlers := userHandler.NewUserHandler(r.UseCases.UserUseCase)
 	userRoutes.NewUserRoutes(v1, userHandlers)
+
+	// Messages path
+
 }

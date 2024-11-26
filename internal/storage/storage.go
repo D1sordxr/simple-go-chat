@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	storage "github.com/D1sordxr/simple-go-chat/internal/storage/config"
+	"github.com/D1sordxr/simple-go-chat/internal/storage/dao/message"
 	"github.com/D1sordxr/simple-go-chat/internal/storage/dao/user"
 	"github.com/D1sordxr/simple-go-chat/internal/storage/migrations"
 	"github.com/jackc/pgx/v5"
@@ -12,6 +13,7 @@ import (
 type Storage struct {
 	Connection *pgx.Conn
 	UserDAO    *user.DAOImpl
+	MessageDAO *message.DAOImpl
 }
 
 func NewStorage(config *storage.StorageConfig) (*Storage, error) {
@@ -27,6 +29,7 @@ func NewStorage(config *storage.StorageConfig) (*Storage, error) {
 	}
 
 	userDAO := user.NewUserDAO(storageConnection)
+	messageDAO := message.NewMessageDAO(storageConnection)
 
-	return &Storage{Connection: storageConnection, UserDAO: userDAO}, nil
+	return &Storage{Connection: storageConnection, UserDAO: userDAO, MessageDAO: messageDAO}, nil
 }

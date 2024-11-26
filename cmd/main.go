@@ -20,7 +20,7 @@ func main() {
 		log.Fatalf("error connecting storage: %v", err)
 	}
 
-	useCases := loadUseCases.NewUseCases(storage.UserDAO)
+	useCases := loadUseCases.NewUseCases(storage.UserDAO, storage.MessageDAO)
 
 	router := loadEngine.NewEngine().Engine
 
