@@ -29,4 +29,17 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 			Data:    err.Error(),
 		})
 	}
+
+	message, err = h.UseCase.Create(message)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusCreated, responses.CommonResponse{
+		Message: "Successfully created!",
+		Data:    message,
+	})
 }
