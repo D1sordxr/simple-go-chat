@@ -1,7 +1,6 @@
 package message
 
 import (
-	"errors"
 	"github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/responses"
 	"github.com/D1sordxr/simple-go-chat/internal/application/message/dto"
 	"github.com/gin-gonic/gin"
@@ -21,8 +20,13 @@ func NewMessageHandler(uc UseCase) *Handler {
 }
 
 func (h *Handler) WriteMessage(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, responses.CommonResponse{
-		Message: "error",
-		Data:    errors.New("not implemented"),
-	})
+	var message dto.Message
+	err := c.BindJSON(&message)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+	}
 }
