@@ -31,5 +31,9 @@ func NewStorage(config *storage.StorageConfig) (*Storage, error) {
 	userDAO := user.NewUserDAO(storageConnection)
 	messageDAO := message.NewMessageDAO(storageConnection)
 
-	return &Storage{Connection: storageConnection, UserDAO: userDAO, MessageDAO: messageDAO}, nil
+	return &Storage{
+		Connection: storageConnection,
+		UserDAO:    userDAO,
+		MessageDAO: messageDAO,
+	}, nil
 }

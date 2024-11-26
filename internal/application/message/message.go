@@ -9,8 +9,8 @@ type UseCase struct {
 	dao.MessageDAO
 }
 
-func NewMessageUseCase(dao dao.MessageDAO) UseCase {
-	return UseCase{dao}
+func NewMessageUseCase(dao dao.MessageDAO) *UseCase {
+	return &UseCase{dao}
 }
 
 func (uc *UseCase) Create(message dto.Message) (dto.Message, error) {
