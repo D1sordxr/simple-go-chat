@@ -18,18 +18,21 @@ func NewMessageDAO(conn *pgx.Conn) *DAOImpl {
 }
 
 func (dao *DAOImpl) Create(message dto.Message) (dto.Message, error) {
-	if len(message.Content) <= 0 {
-		err := errors.New("message content can't be empty")
+	var err error
+	if len(message.Content) == 0 {
+		err = errors.New("message content can't be empty")
 		return dto.Message{}, err
 	}
 
-	err := dao.Storage.QueryRow(context.Background(), `
-		INSERT INTO messages(created_at, updated_at, content, user_id) 
+	err = dao.Storage.QueryRow(context.Background(), `
+		INSERT INTO messages (created_at, updated_at, content, user_id) 
 		VALUES (NOW(), NOW(), $1, $2) 
 		RETURNING created_at, updated_at, content, user_id
 	`, message.Content, message.UserID).Scan(
 		&message.CreatedAt,
 		&message.UpdatedAt,
+		&message.Content,
+		&message.UserID,
 	)
 	if err != nil {
 		return dto.Message{}, err
