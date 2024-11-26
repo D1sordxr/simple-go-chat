@@ -28,6 +28,7 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 			Message: "Error",
 			Data:    err.Error(),
 		})
+		return
 	}
 
 	message, err = h.UseCase.Create(message)
@@ -36,6 +37,7 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 			Message: "Error",
 			Data:    err.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusCreated, responses.CommonResponse{

@@ -27,12 +27,13 @@ func (dao *DAOImpl) Create(message dto.Message) (dto.Message, error) {
 	err = dao.Storage.QueryRow(context.Background(), `
 		INSERT INTO messages (created_at, updated_at, content, user_id) 
 		VALUES (NOW(), NOW(), $1, $2) 
-		RETURNING created_at, updated_at, content, user_id
+		RETURNING created_at, updated_at, content, user_id, id
 	`, message.Content, message.UserID).Scan(
 		&message.CreatedAt,
 		&message.UpdatedAt,
 		&message.Content,
 		&message.UserID,
+		&message.ID,
 	)
 	if err != nil {
 		return dto.Message{}, err
