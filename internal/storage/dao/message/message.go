@@ -12,9 +12,7 @@ type DAOImpl struct {
 }
 
 func NewMessageDAO(conn *pgx.Conn) *DAOImpl {
-	return &DAOImpl{
-		Storage: conn,
-	}
+	return &DAOImpl{Storage: conn}
 }
 
 func (dao *DAOImpl) Create(message dto.Message) (dto.Message, error) {
