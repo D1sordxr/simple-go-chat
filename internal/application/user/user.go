@@ -26,5 +26,6 @@ func (uc *UseCase) FirstTest(user dto.User) ([]dto.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return uc.UserDAO.GetAll()
+	//return uc.UserDAO.GetAll()
+	return []dto.User{}, nil
 }
