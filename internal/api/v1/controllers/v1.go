@@ -3,8 +3,10 @@ package controllers
 import (
 	messageHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/message"
 	userHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/user"
+	wsHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/websocket"
 	messageRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/message"
 	userRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/user"
+	wsRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/websocket"
 	"github.com/D1sordxr/simple-go-chat/internal/application"
 	"github.com/gin-gonic/gin"
 )
@@ -33,4 +35,8 @@ func (r *RoutesV1) setupRoutesV1() {
 	// Messages path
 	messageHandlers := messageHandler.NewMessageHandler(r.UseCases.MessageUseCase)
 	messageRoutes.NewMessageRoutes(v1, messageHandlers)
+
+	// Websocket path
+	wsHandlers := wsHandler.NewWebSocketHandler()
+	wsRoutes.NewWebSocketRoutes(v1, wsHandlers)
 }
