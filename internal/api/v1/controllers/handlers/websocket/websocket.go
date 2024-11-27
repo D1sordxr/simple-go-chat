@@ -12,9 +12,28 @@ type Handler struct {
 	Upgrader websocket.Upgrader
 }
 
+type Client struct {
+	hub *Hub
+
+	// The websocket connection.
+	conn *websocket.Conn
+
+	// Buffered channel of outbound messages.
+	send chan []byte
+}
+
+type Hub struct {
+	Clients    map[*Client]bool
+	Broadcast  chan []byte
+	Register   chan *Client
+	Unregister chan *Client
+}
+
 func NewWebSocketHandler() *Handler {
 	upgrader := websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool { return true },
+		CheckOrigin:     func(r *http.Request) bool { return true },
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
 	}
 
 	return &Handler{
@@ -37,16 +56,15 @@ func (h *Handler) HandleWebSocket(c *gin.Context) {
 	log.Println("WebSocket connection established")
 
 	for {
-		messageType, message, err := conn.ReadMessage()
+		messageType, data, err := conn.ReadMessage()
 		if err != nil {
 			log.Printf("Read error: %v", err)
 			break
 		}
 
-		log.Printf("Received message: %s", message)
+		log.Printf("Received message: %s", data)
 
-		err = conn.WriteMessage(messageType, message)
-		if err != nil {
+		if err = conn.WriteMessage(messageType, data); err != nil {
 			log.Printf("Write error: %v", err)
 			break
 		}
