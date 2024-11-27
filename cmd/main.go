@@ -20,7 +20,7 @@ func main() {
 
 	database, err := loadPostgres.NewDatabase(&cfg.Storage)
 	if err != nil {
-		log.Fatalf("error loading config: %v", err)
+		log.Fatalf("error connecting database: %v", err)
 	}
 
 	userDAO := loadUserDAO.NewUserDAO(database.Connection)
@@ -28,7 +28,7 @@ func main() {
 
 	storage, err := loadStorage.NewStorage(userDAO, messageDAO)
 	if err != nil {
-		log.Fatalf("error connecting storage: %v", err)
+		log.Fatalf("error initializing storage: %v", err)
 	}
 
 	useCases := loadUseCases.NewUseCases(storage.UserDAO, storage.MessageDAO)
