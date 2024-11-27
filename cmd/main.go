@@ -6,6 +6,9 @@ import (
 	loadUseCases "github.com/D1sordxr/simple-go-chat/internal/application"
 	loadConfig "github.com/D1sordxr/simple-go-chat/internal/config"
 	loadStorage "github.com/D1sordxr/simple-go-chat/internal/storage"
+	loadMessageDAO "github.com/D1sordxr/simple-go-chat/internal/storage/dao/message"
+	loadUserDAO "github.com/D1sordxr/simple-go-chat/internal/storage/dao/user"
+	loadPostgres "github.com/D1sordxr/simple-go-chat/internal/storage/postgres"
 	"log"
 )
 
@@ -15,7 +18,15 @@ func main() {
 		log.Fatalf("error loading config: %v", err)
 	}
 
-	storage, err := loadStorage.NewStorage(&cfg.Storage)
+	database, err := loadPostgres.NewDatabase(&cfg.Storage)
+	if err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
+
+	userDAO := loadUserDAO.NewUserDAO(database.Connection)
+	messageDAO := loadMessageDAO.NewMessageDAO(database.Connection)
+
+	storage, err := loadStorage.NewStorage(userDAO, messageDAO)
 	if err != nil {
 		log.Fatalf("error connecting storage: %v", err)
 	}
