@@ -16,3 +16,15 @@ func NewUserUseCase(dao dao.UserDAO) *UseCase {
 func (uc *UseCase) Create(user dto.User) (dto.User, error) {
 	return uc.UserDAO.Create(user)
 }
+
+func (uc *UseCase) FirstTest(user dto.User) ([]dto.User, error) {
+	_, err := uc.UserDAO.Create(user)
+	if err != nil {
+		return nil, err
+	}
+	_, err = uc.UserDAO.Create(user)
+	if err != nil {
+		return nil, err
+	}
+	return uc.UserDAO.GetAll()
+}

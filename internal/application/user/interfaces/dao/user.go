@@ -6,4 +6,5 @@ import (
 
 type UserDAO interface {
 	Create(user dto.User) (dto.User, error)
+	//GetAll() ([]dto.User, error)
 }
