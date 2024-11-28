@@ -19,5 +19,5 @@ func NewWebSocketRoutes(rg *gin.RouterGroup, h *websocket.Handler) {
 }
 
 func (r *Routes) setupWebSocketRoutes() {
-	r.RouterGroup.GET("/ws", r.Handler.HandleWebSocket)
+	r.RouterGroup.GET("/not/ws", r.Handler.HandleWebSocket)
 }

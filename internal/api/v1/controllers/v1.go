@@ -4,9 +4,11 @@ import (
 	messageHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/message"
 	userHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/user"
 	wsHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/websocket"
+	loadHub "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/websocket/chat"
 	messageRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/message"
 	userRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/user"
 	wsRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/websocket"
+	chatRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/websocket/chat"
 	"github.com/D1sordxr/simple-go-chat/internal/application"
 	"github.com/gin-gonic/gin"
 )
@@ -39,4 +41,10 @@ func (r *RoutesV1) setupRoutesV1() {
 	// Websocket path
 	wsHandlers := wsHandler.NewWebSocketHandler()
 	wsRoutes.NewWebSocketRoutes(v1, wsHandlers)
+
+	// Chat path
+	hub := loadHub.NewHub()
+	client := loadHub.NewClient(hub)
+	chatRoutes.NewChatRoutes(v1, hub, client)
+	go hub.Run()
 }
