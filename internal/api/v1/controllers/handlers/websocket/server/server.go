@@ -47,7 +47,7 @@ func (s *Server) broadcast(b []byte) {
 }
 
 func (s *Server) HandleWebSocket(ws *websocket.Conn) {
-	log.Printf("new incoming connection from client: %v", ws)
+	log.Printf("new incoming connection from client: %v", ws.RemoteAddr())
 
 	s.Connections[ws] = true
 	s.readLoop(ws)
