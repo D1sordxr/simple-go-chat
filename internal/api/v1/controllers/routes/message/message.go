@@ -21,6 +21,7 @@ func NewMessageRoutes(rg *gin.RouterGroup, h *message.Handler) {
 func (r *Routes) setupMessageRoutes() {
 	api := r.RouterGroup.Group("/messages")
 	{
+		api.GET("/message", r.Handler.GetAll)
 		api.POST("/message", r.Handler.WriteMessage)
 	}
 }

@@ -16,3 +16,7 @@ func NewMessageUseCase(dao dao.MessageDAO) *UseCase {
 func (uc *UseCase) Create(message dto.Message) (dto.Message, error) {
 	return uc.MessageDAO.Create(message)
 }
+
+func (uc *UseCase) GetAll() (dto.Messages, error) {
+	return uc.MessageDAO.GetAll()
+}

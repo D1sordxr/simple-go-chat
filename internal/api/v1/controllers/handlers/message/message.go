@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-// TODO: get all messages in dao interface, messageUseCase interface and methods
-
 type Handler struct {
 	Server Broadcaster
 	UseCase
@@ -54,5 +52,19 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 	c.JSON(http.StatusCreated, responses.CommonResponse{
 		Message: "Successfully created!",
 		Data:    message,
+	})
+}
+
+func (h *Handler) GetAll(c *gin.Context) {
+	messages, err := h.UseCase.GetAll()
+	if err != nil {
+		c.JSON(http.StatusConflict, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, responses.CommonResponse{
+		Data: messages,
 	})
 }
