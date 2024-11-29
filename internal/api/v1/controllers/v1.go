@@ -28,15 +28,15 @@ func (r *RoutesV1) setupRoutesV1() {
 	// Main path
 	v1 := r.RouterGroup.Group("/v1")
 
+	// Websocket setup
+	wsServer := setupWSServer.NewServer()
+	setupWSRoutes.NewWebSocket(v1, wsServer)
+
 	// Users path
 	userHandlers := userHandler.NewUserHandler(r.UseCases.UserUseCase)
 	userRoutes.NewUserRoutes(v1, userHandlers)
 
 	// Messages path
-	messageHandlers := messageHandler.NewMessageHandler(r.UseCases.MessageUseCase)
+	messageHandlers := messageHandler.NewMessageHandler(r.UseCases.MessageUseCase, wsServer)
 	messageRoutes.NewMessageRoutes(v1, messageHandlers)
-
-	// Websocket setup
-	wsServer := setupWSServer.NewServer()
-	setupWSRoutes.NewWebSocket(v1, wsServer)
 }

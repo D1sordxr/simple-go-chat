@@ -1,7 +1,9 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/D1sordxr/simple-go-chat/internal/application/message/dto"
 	"golang.org/x/net/websocket"
 	"io"
 	"log"
@@ -20,6 +22,13 @@ func NewServer() *Server {
 }
 
 func (s *Server) readLoop(ws *websocket.Conn) {
+	defer func() {
+		delete(s.Connections, ws)
+		if err := ws.Close(); err != nil {
+			log.Printf("closing connection error: %s", err.Error())
+		}
+	}()
+
 	for {
 		n, err := ws.Read(s.Buf)
 		if err != nil {
@@ -33,6 +42,26 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 
 		s.broadcast(message)
 	}
+}
+
+func (s *Server) Broadcast(message dto.Message) error {
+	b, err := json.Marshal(message)
+	if err != nil {
+		return err
+	}
+
+	for ws := range s.Connections {
+		go func(ws *websocket.Conn) {
+			_, err = ws.Write(b)
+			if err != nil {
+				log.Printf("broadcast error: %v", err)
+				delete(s.Connections, ws)
+				_ = ws.Close()
+			}
+		}(ws)
+	}
+
+	return nil
 }
 
 func (s *Server) broadcast(b []byte) {

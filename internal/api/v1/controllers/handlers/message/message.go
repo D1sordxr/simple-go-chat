@@ -8,15 +8,15 @@ import (
 )
 
 type Handler struct {
+	Server Broadcaster
 	UseCase
 }
 
-type UseCase interface {
-	Create(message dto.Message) (dto.Message, error)
-}
-
-func NewMessageHandler(uc UseCase) *Handler {
-	return &Handler{uc}
+func NewMessageHandler(uc UseCase, server Broadcaster) *Handler {
+	return &Handler{
+		Server:  server,
+		UseCase: uc,
+	}
 }
 
 func (h *Handler) WriteMessage(c *gin.Context) {
@@ -36,6 +36,15 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, responses.CommonResponse{
 			Message: "Error",
 			Data:    err.Error(),
+		})
+		return
+	}
+
+	err = h.Server.Broadcast(message)
+	if err != nil {
+		c.JSON(http.StatusCreated, responses.CommonResponse{
+			Message: "Successfully created but broadcast failed. Reload might be required.",
+			Data:    message,
 		})
 		return
 	}
