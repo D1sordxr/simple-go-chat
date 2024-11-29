@@ -1,31 +1,25 @@
-package main
+package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"golang.org/x/net/websocket"
 	"io"
+	"log"
 )
 
 type Server struct {
 	Connections map[*websocket.Conn]bool
+	Buf         []byte
 }
 
 func NewServer() *Server {
 	return &Server{Connections: make(map[*websocket.Conn]bool)}
 }
 
-func (s *Server) handleWS(ws *websocket.Conn) {
-	fmt.Println("new incoming connection from client:", ws.RemoteAddr())
-
-	s.Connections[ws] = true
-	s.readLoop(ws)
-}
-
 func (s *Server) readLoop(ws *websocket.Conn) {
-	buf := make([]byte, 1024)
+	s.Buf = make([]byte, 1024)
 	for {
-		n, err := ws.Read(buf)
+		n, err := ws.Read(s.Buf)
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -33,9 +27,9 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			fmt.Println("read error:", err)
 			continue
 		}
-		msg := buf[:n]
+		message := s.Buf[:n]
 
-		s.broadcast(msg)
+		s.broadcast(message)
 	}
 }
 
@@ -50,11 +44,9 @@ func (s *Server) broadcast(b []byte) {
 	}
 }
 
-func main() {
-	server := NewServer()
-	router := gin.Default()
-	router.GET("/ws", func(ctx *gin.Context) {
-		websocket.Handler(server.handleWS).ServeHTTP(ctx.Writer, ctx.Request)
-	})
-	router.Run(":3333")
+func (s *Server) HandleWebSocket(ws *websocket.Conn) {
+	log.Printf("new incoming connection from client: %v", ws)
+
+	s.Connections[ws] = true
+	s.readLoop(ws)
 }

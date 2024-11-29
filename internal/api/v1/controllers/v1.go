@@ -3,12 +3,10 @@ package controllers
 import (
 	messageHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/message"
 	userHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/user"
-	wsHandler "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/websocket"
-	loadHub "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/websocket/chat"
+	setupWSServer "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/handlers/websocket/server"
 	messageRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/message"
 	userRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/user"
-	wsRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/websocket"
-	chatRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/websocket/chat"
+	setupWSRoutes "github.com/D1sordxr/simple-go-chat/internal/api/v1/controllers/routes/websocket/server"
 	"github.com/D1sordxr/simple-go-chat/internal/application"
 	"github.com/gin-gonic/gin"
 )
@@ -38,13 +36,7 @@ func (r *RoutesV1) setupRoutesV1() {
 	messageHandlers := messageHandler.NewMessageHandler(r.UseCases.MessageUseCase)
 	messageRoutes.NewMessageRoutes(v1, messageHandlers)
 
-	// Websocket path
-	wsHandlers := wsHandler.NewWebSocketHandler()
-	wsRoutes.NewWebSocketRoutes(v1, wsHandlers)
-
-	// Chat path
-	hub := loadHub.NewHub()
-	client := loadHub.NewClient(hub)
-	chatRoutes.NewChatRoutes(v1, hub, client)
-	go hub.Run()
+	// Websocket setup
+	wsServer := setupWSServer.NewServer()
+	setupWSRoutes.NewWebSocket(v1, wsServer)
 }
