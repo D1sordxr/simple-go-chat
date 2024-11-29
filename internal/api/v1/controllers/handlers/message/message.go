@@ -65,6 +65,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, responses.CommonResponse{
-		Data: messages,
+		Message: "All messages",
+		Data:    messages,
 	})
 }
