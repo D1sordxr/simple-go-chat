@@ -41,3 +41,36 @@ func (dao *DAOImpl) Create(message dto.Message) (dto.Message, error) {
 
 	return message, nil
 }
+
+func (dao *DAOImpl) GetAll() (dto.Messages, error) {
+	var messages dto.Messages
+
+	rows, err := dao.Storage.Query(context.Background(), `
+		SELECT id, user_id, content, is_edited, created_at, updated_at FROM messages
+	`)
+	if err != nil {
+		return dto.Messages{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var message dto.Message
+		err = rows.Scan(
+			&message.ID,
+			&message.UserID,
+			&message.Content,
+			&message.IsEdited,
+			&message.CreatedAt,
+			&message.UpdatedAt,
+		)
+		if err != nil {
+			return dto.Messages{}, err
+		}
+		messages.Messages = append(messages.Messages, message)
+	}
+	if err = rows.Err(); err != nil {
+		return dto.Messages{}, err
+	}
+
+	return messages, nil
+}

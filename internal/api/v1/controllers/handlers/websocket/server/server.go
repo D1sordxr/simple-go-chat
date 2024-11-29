@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/D1sordxr/simple-go-chat/internal/application/message/dto"
 	"golang.org/x/net/websocket"
 	"io"
@@ -35,7 +34,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			if err == io.EOF {
 				break
 			}
-			fmt.Println("read error:", err)
+			log.Printf("read error: %v", err)
 			continue
 		}
 		message := s.Buf[:n]
@@ -69,7 +68,7 @@ func (s *Server) broadcast(b []byte) {
 		go func(ws *websocket.Conn) {
 			_, err := ws.Write(b)
 			if err != nil {
-				fmt.Println("error: ", err)
+				log.Printf("error: %v", err)
 			}
 		}(ws)
 	}

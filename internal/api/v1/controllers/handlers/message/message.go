@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+// TODO: get all messages in dao interface, messageUseCase interface and methods
+
 type Handler struct {
 	Server Broadcaster
 	UseCase
