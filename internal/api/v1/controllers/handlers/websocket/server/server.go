@@ -13,11 +13,13 @@ type Server struct {
 }
 
 func NewServer() *Server {
-	return &Server{Connections: make(map[*websocket.Conn]bool)}
+	return &Server{
+		Connections: make(map[*websocket.Conn]bool),
+		Buf:         make([]byte, 1024),
+	}
 }
 
 func (s *Server) readLoop(ws *websocket.Conn) {
-	s.Buf = make([]byte, 1024)
 	for {
 		n, err := ws.Read(s.Buf)
 		if err != nil {
