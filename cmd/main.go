@@ -14,6 +14,8 @@ import (
 	"log"
 )
 
+// TODO: user auth
+
 func main() {
 	cfg, err := loadConfig.NewConfig()
 	if err != nil {
