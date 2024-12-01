@@ -25,3 +25,7 @@ func (uc *UseCase) GetAll(ctx context.Context) (dto.Messages, error) {
 func (uc *UseCase) Delete(id string, ctx context.Context) (dto.Message, error) {
 	return uc.MessageDAO.Delete(id, ctx)
 }
+
+func (uc *UseCase) Update(message dto.Message, ctx context.Context) (dto.Message, error) {
+	return uc.MessageDAO.Update(message, ctx)
+}

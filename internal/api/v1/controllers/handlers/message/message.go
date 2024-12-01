@@ -5,6 +5,7 @@ import (
 	"github.com/D1sordxr/simple-go-chat/internal/application/message/dto"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type Handler struct {
@@ -21,8 +22,8 @@ func NewMessageHandler(uc UseCase, server Broadcaster) *Handler {
 
 func (h *Handler) WriteMessage(c *gin.Context) {
 	var message dto.Message
-	err := c.BindJSON(&message)
 
+	err := c.BindJSON(&message)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, responses.CommonResponse{
 			Message: "Error",
@@ -85,5 +86,42 @@ func (h *Handler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, responses.CommonResponse{
 		Message: "Successfully deleted!",
 		Data:    deletedMessage,
+	})
+}
+
+func (h *Handler) Update(c *gin.Context) {
+	var message dto.Message
+	id := c.Param("id")
+
+	err := c.BindJSON(&message)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+		return
+	}
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+		return
+	}
+	message.ID = intID
+
+	message, err = h.UseCase.Update(message, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, responses.CommonResponse{
+		Message: "Successfully updated!",
+		Data:    message,
 	})
 }

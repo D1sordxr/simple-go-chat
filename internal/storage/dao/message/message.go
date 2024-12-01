@@ -98,3 +98,9 @@ func (dao *DAOImpl) Delete(id string, ctx context.Context) (dto.Message, error) 
 
 	return message, nil
 }
+
+func (dao *DAOImpl) Update(message dto.Message, ctx context.Context) (dto.Message, error) {
+	err := errors.New("not implemented")
+
+	return dto.Message{}, err
+}
