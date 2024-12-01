@@ -9,8 +9,8 @@ import (
 )
 
 type Handler struct {
-	Server Broadcaster
-	UseCase
+	Server  Broadcaster
+	UseCase UseCase
 }
 
 func NewMessageHandler(uc UseCase, server Broadcaster) *Handler {
@@ -25,19 +25,14 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 
 	err := c.BindJSON(&message)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	message, err = h.UseCase.Create(message, c)
+	ctx := c.Request.Context()
+	message, err = h.UseCase.Create(message, ctx)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -57,16 +52,15 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 }
 
 func (h *Handler) GetAll(c *gin.Context) {
-	messages, err := h.UseCase.GetAll(c)
+	ctx := c.Request.Context()
+	messages, err := h.UseCase.GetAll(ctx)
 	if err != nil {
-		c.JSON(http.StatusConflict, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusConflict, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusOK, responses.CommonResponse{
-		Message: "Generated all messages",
+		Message: "Fetched all messages",
 		Data:    messages,
 	})
 }
@@ -74,12 +68,10 @@ func (h *Handler) GetAll(c *gin.Context) {
 func (h *Handler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	deletedMessage, err := h.UseCase.Delete(id, c)
+	ctx := c.Request.Context()
+	deletedMessage, err := h.UseCase.Delete(id, ctx)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -95,33 +87,25 @@ func (h *Handler) Update(c *gin.Context) {
 
 	err := c.BindJSON(&message)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	intID, err := strconv.Atoi(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	message.ID = intID
 
-	message, err = h.UseCase.Update(message, c)
+	ctx := c.Request.Context()
+	updatedMessage, err := h.UseCase.Update(message, ctx)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.CommonResponse{
-			Message: "Error",
-			Data:    err.Error(),
-		})
+		responses.RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, responses.CommonResponse{
 		Message: "Successfully updated!",
-		Data:    message,
+		Data:    updatedMessage,
 	})
 }

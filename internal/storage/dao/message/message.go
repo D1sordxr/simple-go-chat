@@ -100,7 +100,30 @@ func (dao *DAOImpl) Delete(id string, ctx context.Context) (dto.Message, error) 
 }
 
 func (dao *DAOImpl) Update(message dto.Message, ctx context.Context) (dto.Message, error) {
-	err := errors.New("not implemented")
+	if len(message.Content) == 0 {
+		return dto.Message{}, errors.New("message content cannot be empty")
+	}
 
-	return dto.Message{}, err
+	var updatedMessage dto.Message
+
+	err := dao.Storage.QueryRow(ctx, `
+		UPDATE messages 
+		SET content = $1, updated_at = NOW()
+		WHERE id = $2
+		RETURNING created_at, updated_at, content, user_id, id
+	`, message.Content, message.ID).Scan(
+		&updatedMessage.CreatedAt,
+		&updatedMessage.UpdatedAt,
+		&updatedMessage.Content,
+		&updatedMessage.UserID,
+		&updatedMessage.ID,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return dto.Message{}, fmt.Errorf("message with id %v not found", message.ID)
+		}
+		return dto.Message{}, err
+	}
+
+	return updatedMessage, nil
 }
