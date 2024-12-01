@@ -18,14 +18,14 @@ func NewMessageDAO(conn *pgx.Conn) *DAOImpl {
 	return &DAOImpl{Storage: conn}
 }
 
-func (dao *DAOImpl) Create(message dto.Message) (dto.Message, error) {
+func (dao *DAOImpl) Create(message dto.Message, ctx context.Context) (dto.Message, error) {
 	var err error
 	if len(message.Content) == 0 {
 		err = errors.New("message content can't be empty")
 		return dto.Message{}, err
 	}
 
-	err = dao.Storage.QueryRow(context.Background(), `
+	err = dao.Storage.QueryRow(ctx, `
 		INSERT INTO messages (created_at, updated_at, content, user_id) 
 		VALUES (NOW(), NOW(), $1, $2) 
 		RETURNING created_at, updated_at, content, user_id, id
@@ -43,10 +43,10 @@ func (dao *DAOImpl) Create(message dto.Message) (dto.Message, error) {
 	return message, nil
 }
 
-func (dao *DAOImpl) GetAll() (dto.Messages, error) {
+func (dao *DAOImpl) GetAll(ctx context.Context) (dto.Messages, error) {
 	var messages dto.Messages
 
-	rows, err := dao.Storage.Query(context.Background(), `
+	rows, err := dao.Storage.Query(ctx, `
 		SELECT id, user_id, content, is_edited, created_at, updated_at FROM messages
 	`)
 	if err != nil {

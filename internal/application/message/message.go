@@ -14,12 +14,12 @@ func NewMessageUseCase(dao dao.MessageDAO) *UseCase {
 	return &UseCase{dao}
 }
 
-func (uc *UseCase) Create(message dto.Message) (dto.Message, error) {
-	return uc.MessageDAO.Create(message)
+func (uc *UseCase) Create(message dto.Message, ctx context.Context) (dto.Message, error) {
+	return uc.MessageDAO.Create(message, ctx)
 }
 
-func (uc *UseCase) GetAll() (dto.Messages, error) {
-	return uc.MessageDAO.GetAll()
+func (uc *UseCase) GetAll(ctx context.Context) (dto.Messages, error) {
+	return uc.MessageDAO.GetAll(ctx)
 }
 
 func (uc *UseCase) Delete(id string, ctx context.Context) (dto.Message, error) {

@@ -6,7 +6,7 @@ import (
 )
 
 type MessageDAO interface {
-	Create(message dto.Message) (dto.Message, error)
-	GetAll() (dto.Messages, error)
+	Create(message dto.Message, ctx context.Context) (dto.Message, error)
+	GetAll(ctx context.Context) (dto.Messages, error)
 	Delete(id string, ctx context.Context) (dto.Message, error)
 }

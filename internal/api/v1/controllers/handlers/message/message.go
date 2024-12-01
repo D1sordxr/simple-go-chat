@@ -31,7 +31,7 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 		return
 	}
 
-	message, err = h.UseCase.Create(message)
+	message, err = h.UseCase.Create(message, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, responses.CommonResponse{
 			Message: "Error",
@@ -56,7 +56,7 @@ func (h *Handler) WriteMessage(c *gin.Context) {
 }
 
 func (h *Handler) GetAll(c *gin.Context) {
-	messages, err := h.UseCase.GetAll()
+	messages, err := h.UseCase.GetAll(c)
 	if err != nil {
 		c.JSON(http.StatusConflict, responses.CommonResponse{
 			Message: "Error",
