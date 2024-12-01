@@ -65,7 +65,25 @@ func (h *Handler) GetAll(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, responses.CommonResponse{
-		Message: "All messages",
+		Message: "Generated all messages",
 		Data:    messages,
+	})
+}
+
+func (h *Handler) Delete(c *gin.Context) {
+	id := c.Param("id")
+
+	deletedMessage, err := h.UseCase.Delete(id, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, responses.CommonResponse{
+			Message: "Error",
+			Data:    err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, responses.CommonResponse{
+		Message: "Successfully deleted!",
+		Data:    deletedMessage,
 	})
 }

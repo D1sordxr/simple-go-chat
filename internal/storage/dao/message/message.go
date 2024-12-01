@@ -3,6 +3,7 @@ package message
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/D1sordxr/simple-go-chat/internal/application/message/dto"
 	"github.com/D1sordxr/simple-go-chat/internal/application/message/interfaces/dao"
 	"github.com/jackc/pgx/v5"
@@ -73,4 +74,27 @@ func (dao *DAOImpl) GetAll() (dto.Messages, error) {
 	}
 
 	return messages, nil
+}
+
+func (dao *DAOImpl) Delete(id string, ctx context.Context) (dto.Message, error) {
+	var message dto.Message
+
+	err := dao.Storage.QueryRow(ctx, `
+		DELETE FROM messages WHERE id = $1
+		RETURNING created_at, updated_at, content, user_id, id
+	`, id).Scan(
+		&message.CreatedAt,
+		&message.UpdatedAt,
+		&message.Content,
+		&message.UserID,
+		&message.ID,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return dto.Message{}, fmt.Errorf("message with id %s not found", id)
+		}
+		return dto.Message{}, err
+	}
+
+	return message, nil
 }

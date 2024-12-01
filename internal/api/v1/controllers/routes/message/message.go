@@ -23,5 +23,6 @@ func (r *Routes) setupMessageRoutes() {
 	{
 		api.GET("/message", r.Handler.GetAll)
 		api.POST("/message", r.Handler.WriteMessage)
+		api.DELETE("/message/:id", r.Handler.Delete)
 	}
 }
